@@ -20,14 +20,14 @@ source-code: https://github.com/CollectionBuilder/collectionbuilder-gh
 # SITE SETTINGS
 #
 # title of site appears in banner
-title: CollectionBuilder-GH 
+title: Cultures of Eurasian Antiquity 
 # tagline, a short phrase that will appear throughout the site in the top banner
-tagline: a template for creating simple digital exhibits
+tagline: historical collection
 # description appears in meta tags and other locations
 # this description might appear in search result lists, keep around 160 characters max
-description: "CollectionBuilder-GH is a template for creating small digital collection exhibits on GitHub Pages designed for teaching digital library skills"
+description: This collection aims to show a small collection of items from Eurasian antiquity, from as early as 1000 BCE to 1200 CE. Specifically, these cultures were at some point--or presently--are described as being from the Scythian culture. The Scythians were a group of nomadic steppe nomads that lived primarily around the Northern Black Sea Coast region. Sarmatians later conquered them and assimilated them into their culture. Many of the other Eurasian tribes and nomads, heavily inspired by their environment, developed an 'animal style' artwork, which was spread far. The so-called 'Scythian Triade' was made of this animal art style, cavalry and horse-riding equipment, and advanced armaments. 
 # creator of the digital collection, to appear in meta tags; we typically use our GitHub usernames but feel free to just use your name
-author: CollectionBuilder
+author: ChristianRiddle
 
 ##########
 # COLLECTION SETTINGS
