@@ -12,8 +12,28 @@ custom-foot: js/timeline-js.html
 {% else %}
 {%- assign items = site.data[site.metadata] | where_exp: 'item','item.objectid' | where_exp: 'item','item.parentid == nil' -%}
 {% endif %}
-{%- assign items = items | where_exp: 'item','item[field]' | sort: field -%}
+{%- assign items = items | where_exp: 'item','item[field]' -%}
 {%- assign raw-dates = items | map: field | compact | uniq -%}
+{%- capture clean-years -%}{% for date in raw-dates %}{%- assign trimmed = date | strip -%}{% comment %}Handle ISO format dates including negative years for BCE{% endcomment %}{% if trimmed contains " / " %}{%- assign date_parts = trimmed | split: " / " -%}{{ date_parts[0] | strip }}{% elsif trimmed contains "/" %}{%- assign date_parts = trimmed | split: "/" -%}{{ date_parts[0] | strip }}{% else %}{{ trimmed }}{% endif %}{% unless forloop.last %};{% endunless %}{%- endfor -%}{%- endcapture -%}
+{%- assign years_array = clean-years | replace: ";;",";" | split: ";" | compact -%}
+{%- comment -%}Create a properly sorted years array for chronological display (BCE to CE){%- endcomment -%}
+{%- assign bce_years = "" -%}
+{%- assign ce_years = "" -%}
+{%- for year in years_array -%}
+  {%- assign year_num = year | plus: 0 -%}
+  {%- if year_num < 0 -%}
+    {%- assign bce_years = bce_years | append: year -%}
+    {%- unless forloop.last -%}{%- assign bce_years = bce_years | append: ";" -%}{%- endunless -%}
+  {%- else -%}
+    {%- assign ce_years = ce_years | append: year -%}  
+    {%- unless forloop.last -%}{%- assign ce_years = ce_years | append: ";" -%}{%- endunless -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign bce_sorted_reverse = bce_years | split: ";" | compact | sort | reverse -%}
+{%- assign ce_sorted = ce_years | split: ";" | compact | sort -%}
+{%- comment -%}Combine BCE (reversed after sort to get most negative first) with CE years{%- endcomment -%}
+{%- assign uniqueYears = bce_sorted_reverse | concat: ce_sorted | uniq -%}
+{%- assign items = items | sort: field -%}
 {%- if site.data.theme.year-navigation -%}
 {%- assign navYears = site.data.theme.year-navigation | split: ";" -%}
 {%- elsif site.data.theme.year-nav-increment -%}
@@ -29,25 +49,56 @@ custom-foot: js/timeline-js.html
     </button>
     <div class="dropdown-menu" aria-labelledby="yearButton">
         {% for y in navYears %}
-        <a class="dropdown-item" href="#y{{ y }}">{{ y }}</a>{% endfor %}
+        {%- assign nav_year = y | plus: 0 -%}
+        {%- if nav_year < 0 -%}
+            {%- assign nav_display = nav_year | abs | append: " BCE" -%}
+        {%- else -%}
+            {%- assign nav_display = nav_year | append: " CE" -%}
+        {%- endif -%}
+        <a class="dropdown-item" href="#y{{ y }}">{{ nav_display }}</a>{% endfor %}
     </div>
 </div>
 {%- endif -%}
 
 {{ content }}
 
-<h3><a href="#y{{ uniqueYears | first }}">{{ uniqueYears | first }}</a> to <a href="#y{{ uniqueYears | last }}">{{ uniqueYears | last }}</a></h3>
+{%- assign first_year = uniqueYears | first | plus: 0 -%}
+{%- assign last_year = uniqueYears | last | plus: 0 -%}
+{%- if first_year < 0 -%}
+    {%- assign first_display = first_year | abs | append: " BCE" -%}
+{%- else -%}
+    {%- assign first_display = first_year | append: " CE" -%}
+{%- endif -%}
+{%- if last_year < 0 -%}
+    {%- assign last_display = last_year | abs | append: " BCE" -%}
+{%- else -%}
+    {%- assign last_display = last_year | append: " CE" -%}
+{%- endif -%}
+
+<h3><a href="#y{{ uniqueYears | first }}">{{ first_display }}</a> to <a href="#y{{ uniqueYears | last }}">{{ last_display }}</a></h3>
 
 <table id="timeline" class="table table-striped">
     <tbody>
         {% for year in uniqueYears %}
+        {%- assign year_num = year | plus: 0 -%}
+        {%- if year_num < 0 -%}
+            {%- assign display_year = year_num | abs | append: " BCE" -%}
+        {%- else -%}
+            {%- assign display_year = year_num | append: " CE" -%}
+        {%- endif -%}
         <tr id="y{{ year }}">
             <th>
-                <h3>{{ year }}</h3>
+                <h3>{{ display_year }}</h3>
             </th>
             <td>
                 <div class="row">
+                    {%- comment -%}Filter items for current year, handling ISO date formats{%- endcomment -%}
                     {%- assign inYear = items | where_exp: 'item', 'item[field] contains year' -%}
+                    {%- comment -%}Also catch items with date ranges that include this year{%- endcomment -%}
+                    {% if inYear.size == 0 %}
+                        {%- assign year_as_string = year | append: "" -%}
+                        {%- assign inYear = items | where_exp: 'item', 'item[field] contains year_as_string' -%}
+                    {% endif %}
                     {% for item in inYear %}
                     <div class="col-lg-4 col-md-6">
                         <a href="{% if item.parentid == nil %}{{ '/item.html' | relative_url | append: '?id=' | append: item.objectid }}{% elsif item.parentid %}{{ '/item.html' | relative_url | append: '?id=' | append: item.parentid | relative_url }}#{{ item.objectid }}{% endif %}" >

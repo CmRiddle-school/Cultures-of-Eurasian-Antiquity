@@ -25,11 +25,12 @@
           "link": "{{ '/item.html' | absolute_url | append: '?id=' | append: item.objectid }}",
           "credit": "{{ site.title }}"
         },
-        "start_date": { {% if item.date contains '-' %}{% assign dates = item.date | split: '-' %}
-          "month": "{{ dates[1] }}",
-          "day": "{{ dates[2] }}",
-          "year": "{{ dates[0] }}"{% elsif item.date contains '/' %}"year": "{{ item.date | strip | split: '/' | last }}"{% else %}
-          "year": "{{ item.date }}"{% endif %}
+        "start_date": { {% assign clean_date = item.date | strip %}{% if clean_date contains '-' %}{% assign date_parts = clean_date | split: '-' %}{% if date_parts[0] == '' %}{% comment %}Negative year BCE like -0475{% endcomment %}
+          "year": "{{ clean_date }}"{% else %}{% comment %}ISO date like 2023-04-15{% endcomment %}
+          "month": "{{ date_parts[1] }}",
+          "day": "{{ date_parts[2] }}",
+          "year": "{{ date_parts[0] }}"{% endif %}{% else %}{% comment %}Simple year{% endcomment %}
+          "year": "{{ clean_date }}"{% endif %}
         },
         "text": {
           "headline": {{ item.title | jsonify }}{% if item.description %},
