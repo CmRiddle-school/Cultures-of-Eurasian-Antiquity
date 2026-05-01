@@ -14,6 +14,11 @@ credits: true
 
 ## About the Collection
 
+The term "Scythian" is a broad misnomer used both casually and scholarly to describe Eurasian Indigenous tribes and clans from Ancient and Late Antiquity--especially nomadic Steppe peoples--in a broad sweeping term. However, these cultures vary greatly in both societal structure, language, and inter-cultural relations. And despite similarities in culture and art styles, these two have significant enough variation between tribes. 
+
+The Xiongnu, for instance, especially during the time of the Xiongnu Confederation in their battle against the Han Dynasty, had an eastern and western leader known as a "Shanyu". The Yuezhi, an
+
+
 This website features a collection of images under Public Domain from The Cleveland Museum of Art, The Metropolitan Museum of Art, and Wikimedia Commons. Other images are under Creative Commons from Wikimedia Commons.
 
 Additional information was obtained from the following JSTOR articles:
